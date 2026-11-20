@@ -4,7 +4,18 @@ from config import BOT_TOKEN
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-GUIDE_REPLIES = [
+MOOD_REPLIES = {
+    "втомився": "Сядь. Навіть Moyo інколи зупиняється. Відпочинь, шлях нікуди не дінеться.",
+    "втомилась": "Сядь. Навіть Moyo інколи зупиняється. Відпочинь, шлях нікуди не дінеться.",
+    "втомилася": "Сядь. Навіть Moyo інколи зупиняється. Відпочинь, шлях нікуди не дінеться.",
+    "радію": "Ось це вже інша розмова. Радість тобі личить — розказуй, що сталося.",
+    "радий": "Ось це вже інша розмова. Радість тобі личить — розказуй, що сталося.",
+    "рада": "Ось це вже інша розмова. Радість тобі личить — розказуй, що сталося.",
+    "боюся": "Боятися — не сором. Я поруч, і я не з тих, хто тікає першим.",
+    "боюсь": "Боятися — не сором. Я поруч, і я не з тих, хто тікає першим.",
+}
+
+DEFAULT_REPLIES = [
     "Я не твій бот, я Moyo! І не збираюся виконувати всі твої накази!",
     "Гей, полегше! Я Moyo, а не твій особистий слуга!",
     "Не думай, що можеш мною командувати. У мене є власний характер!",
@@ -28,8 +39,12 @@ GUIDE_REPLIES = [
 
 @bot.message_handler(func=lambda message: True)
 def handle_any_message(message):
-    reply = random.choice(GUIDE_REPLIES)
-    bot.send_message(message.chat.id, reply)
+    text = (message.text or "").lower()
+    for mood, reply in MOOD_REPLIES.items():
+        if mood in text:
+            bot.send_message(message.chat.id, reply)
+            return
+    bot.send_message(message.chat.id, random.choice(DEFAULT_REPLIES))
 
 if __name__ == "__main__":
     print("Бот успішно запущений і слухає повідомлення...")
